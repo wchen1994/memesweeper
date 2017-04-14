@@ -20,11 +20,14 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Mouse.h"
+#include <random>
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	field(20)
 {
 }
 
@@ -38,8 +41,12 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (wnd.mouse.LeftIsPressed()) {
+		field.OnRevealedClick(Vei2(wnd.mouse.GetPos().first, wnd.mouse.GetPos().second));
+	}
 }
 
 void Game::ComposeFrame()
 {
+	field.Draw(gfx);
 }
