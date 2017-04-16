@@ -49,6 +49,16 @@ void MemeField::Reveal(const Vei2 gridPos)
 	field[gridPos.y * width + gridPos.x].Reveal();
 }
 
+void MemeField::OnFlagClick(const Vei2 screenPos)
+{
+	ToggleFlag(ScreenToGrid(screenPos-pos));
+}
+
+void MemeField::ToggleFlag(const Vei2 gridPos)
+{
+	field[gridPos.y * width + gridPos.x].ToggleFlag();
+}
+
 Vei2 & MemeField::ScreenToGrid(Vei2 screenPos)
 {
 	return screenPos / SpriteCodex::tileSize;
@@ -128,4 +138,17 @@ void MemeField::Tile::Draw(const Vei2 & screenPos, Graphics & gfx) const
 void MemeField::Tile::Reveal()
 {
 	state = State::Revealed;
+}
+
+void MemeField::Tile::ToggleFlag()
+{
+	if (state == State::Hidden) {
+		state = State::Flagged;
+	}
+	else if (state == State::Flagged){
+		state = State::Hidden;
+	}
+	else {
+		assert(false);
+	}
 }

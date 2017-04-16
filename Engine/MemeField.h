@@ -17,6 +17,7 @@ private:
 		bool HasMeme() const;
 		void Draw(const Vei2& screenPos, Graphics& gfx) const;
 		void Reveal();
+		void ToggleFlag();
 	public:
 		int NearMemeCount = 0;
 	private:
@@ -28,6 +29,8 @@ public:
 	void Draw(Graphics& gfx) const;
 	void OnRevealedClick(const Vei2 screenPos);
 	void Reveal(const Vei2 gridPos);
+	void OnFlagClick(const Vei2 screenPos);
+	void ToggleFlag(const Vei2 gridPos);
 	Vei2& ScreenToGrid(const Vei2 screenPos);
 	RectI GetRect() const;
 private:
