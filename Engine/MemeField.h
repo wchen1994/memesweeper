@@ -17,6 +17,8 @@ private:
 		bool HasMeme() const;
 		void Draw(const Vei2& screenPos, Graphics& gfx) const;
 		void Reveal();
+	public:
+		int NearMemeCount = 0;
 	private:
 		State state = State::Hidden;
 		bool hasMeme = false;

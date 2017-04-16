@@ -2,6 +2,7 @@
 #include "SpriteCodex.h"
 #include <assert.h>
 #include <random>
+#include <algorithm>
 
 MemeField::MemeField(int nMemes):
 	pos(100,100)
@@ -17,6 +18,12 @@ MemeField::MemeField(int nMemes):
 		const Vei2 gridPos = { xDist(rng), yDist(rng) };
 		if (!field[gridPos.y * width + gridPos.x].HasMeme()) {
 			field[gridPos.y * width + gridPos.x].SpawnMeme();
+			//increment the memeCount on tile around
+			for (int y = std::max(0, gridPos.y - 1); y <= std::min(height - 1, gridPos.y + 1); y++) {
+				for (int x = std::max(0, gridPos.x - 1); x <= std::min(width - 1, gridPos.x + 1); x++) {
+					field[y*width+x].NearMemeCount++;
+				}
+			}
 		}
 	}
 }
@@ -81,7 +88,36 @@ void MemeField::Tile::Draw(const Vei2 & screenPos, Graphics & gfx) const
 			SpriteCodex::DrawTileBomb(screenPos, gfx);
 		}
 		else {
-			SpriteCodex::DrawTile0(screenPos, gfx);
+			switch (NearMemeCount) {
+			case 0:
+				SpriteCodex::DrawTile0(screenPos, gfx);
+				break;
+			case 1:
+				SpriteCodex::DrawTile1(screenPos, gfx);
+				break;
+			case 2:
+				SpriteCodex::DrawTile2(screenPos, gfx);
+				break;
+			case 3:
+				SpriteCodex::DrawTile3(screenPos, gfx);
+				break;
+			case 4:
+				SpriteCodex::DrawTile4(screenPos, gfx);
+				break;
+			case 5:
+				SpriteCodex::DrawTile5(screenPos, gfx);
+				break;
+			case 6:
+				SpriteCodex::DrawTile6(screenPos, gfx);
+				break;
+			case 7:
+				SpriteCodex::DrawTile7(screenPos, gfx);
+				break;
+			case 8:
+				SpriteCodex::DrawTile8(screenPos, gfx);
+				break;
+			}
+			
 		}
 		break;
 	default:
