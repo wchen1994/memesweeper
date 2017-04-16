@@ -27,8 +27,10 @@ public:
 	void OnRevealedClick(const Vei2 screenPos);
 	void Reveal(const Vei2 gridPos);
 	Vei2& ScreenToGrid(const Vei2 screenPos);
+	RectI GetRect() const;
 private:
 	static constexpr int width = 24;
 	static constexpr int height = 16;
+	Vei2 pos;
 	Tile field[width * height];
 };

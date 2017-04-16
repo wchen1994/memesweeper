@@ -3,7 +3,8 @@
 #include <assert.h>
 #include <random>
 
-MemeField::MemeField(int nMemes)
+MemeField::MemeField(int nMemes):
+	pos(100,100)
 {
 	assert(nMemes > 0 && nMemes < width * height);
 
@@ -22,18 +23,18 @@ MemeField::MemeField(int nMemes)
 
 void MemeField::Draw(Graphics & gfx) const
 {
-	const RectI rect = RectI(0, width*SpriteCodex::tileSize, 0, height*SpriteCodex::tileSize);
+	const RectI rect = RectI(pos, width*SpriteCodex::tileSize, height*SpriteCodex::tileSize);
 	gfx.DrawRect(rect, SpriteCodex::baseColor);
 	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
 		for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
-			field[gridPos.y * width + gridPos.x].Draw(gridPos * SpriteCodex::tileSize, gfx);
+			field[gridPos.y * width + gridPos.x].Draw(pos + gridPos * SpriteCodex::tileSize, gfx);
 		}
 	}
 }
 
 void MemeField::OnRevealedClick(const Vei2 screenPos)
 {
-	Reveal(ScreenToGrid(screenPos));
+	Reveal(ScreenToGrid(screenPos-pos));
 }
 
 void MemeField::Reveal(const Vei2 gridPos)
@@ -44,6 +45,12 @@ void MemeField::Reveal(const Vei2 gridPos)
 Vei2 & MemeField::ScreenToGrid(Vei2 screenPos)
 {
 	return screenPos / SpriteCodex::tileSize;
+}
+
+RectI MemeField::GetRect() const
+{
+	// TODO: insert return statement here
+	return RectI(pos, width*SpriteCodex::tileSize, height*SpriteCodex::tileSize);
 }
 
 void MemeField::Tile::SpawnMeme()

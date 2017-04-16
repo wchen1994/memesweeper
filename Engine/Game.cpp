@@ -42,7 +42,10 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	if (wnd.mouse.LeftIsPressed()) {
-		field.OnRevealedClick(Vei2(wnd.mouse.GetPos().first, wnd.mouse.GetPos().second));
+		auto mousePos = wnd.mouse.GetPos();
+		if (field.GetRect().Contains(Vei2(mousePos.first, mousePos.second))) {
+			field.OnRevealedClick(Vei2(mousePos.first, mousePos.second));
+		}
 	}
 }
 
