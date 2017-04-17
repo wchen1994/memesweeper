@@ -148,7 +148,4 @@ void MemeField::Tile::ToggleFlag()
 	else if (state == State::Flagged){
 		state = State::Hidden;
 	}
-	else {
-		assert(false);
-	}
 }
