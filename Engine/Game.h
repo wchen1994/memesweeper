@@ -45,4 +45,5 @@ private:
 	/*  User Variables              */
 	/********************************/
 	MemeField field;
+	bool isGameOver = false;
 };

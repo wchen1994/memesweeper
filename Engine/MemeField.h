@@ -15,7 +15,7 @@ private:
 	public:
 		void SpawnMeme();
 		bool HasMeme() const;
-		void Draw(const Vei2& screenPos, Graphics& gfx) const;
+		void Draw(const Vei2& screenPos, bool& isGameOver, Graphics& gfx) const;
 		void Reveal();
 		void ToggleFlag();
 	public:
@@ -26,8 +26,8 @@ private:
 	};
 public:
 	MemeField(int nMemes);
-	void Draw(Graphics& gfx) const;
-	void OnRevealedClick(const Vei2 screenPos);
+	void Draw(Graphics& gfx);
+	bool OnRevealedClick(const Vei2 screenPos);
 	void Reveal(const Vei2 gridPos);
 	void OnFlagClick(const Vei2 screenPos);
 	void ToggleFlag(const Vei2 gridPos);
@@ -38,4 +38,6 @@ private:
 	static constexpr int height = 16;
 	Vei2 pos;
 	Tile field[width * height];
+	bool isGameOver = false;
+	class Game *game;
 };
