@@ -18,8 +18,10 @@ private:
 		void Draw(const Vei2& screenPos, bool& isGameOver, Graphics& gfx) const;
 		void Reveal();
 		void ToggleFlag();
+		bool IsEmpty();
+		bool IsHidden();
 	public:
-		int NearMemeCount = 0;
+		int nearMemeCount = 0;
 	private:
 		State state = State::Hidden;
 		bool hasMeme = false;

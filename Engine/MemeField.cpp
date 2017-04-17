@@ -21,7 +21,7 @@ MemeField::MemeField(int nMemes):
 			//increment the memeCount on tile around
 			for (int y = std::max(0, gridPos.y - 1); y <= std::min(height - 1, gridPos.y + 1); y++) {
 				for (int x = std::max(0, gridPos.x - 1); x <= std::min(width - 1, gridPos.x + 1); x++) {
-					field[y*width+x].NearMemeCount++;
+					field[y*width+x].nearMemeCount++;
 				}
 			}
 		}
@@ -50,9 +50,19 @@ bool MemeField::OnRevealedClick(const Vei2 screenPos)
 
 void MemeField::Reveal(const Vei2 gridPos)
 {
-	field[gridPos.y * width + gridPos.x].Reveal();
-	if (field[gridPos.y * width + gridPos.x].HasMeme()) {
+	Tile& tile = field[gridPos.y * width + gridPos.x];
+	tile.Reveal();
+	if (tile.HasMeme()) {
 		isGameOver = true;
+	}
+	if (tile.IsEmpty()) {
+		for (int y = std::max(0, gridPos.y - 1); y <= std::min(height, gridPos.y + 1); y++) {
+			for (int x = std::max(0, gridPos.x - 1); x <= std::min(width, gridPos.x + 1); x++) {
+				if (field[y*width + x].IsHidden()) {
+					Reveal(Vei2(x, y));
+				}
+			}
+		}
 	}
 }
 
@@ -119,7 +129,7 @@ void MemeField::Tile::Draw(const Vei2 & screenPos, bool& isGameOver, Graphics & 
 			SpriteCodex::DrawTileBomb(screenPos, gfx);
 		}
 		else {
-			switch (NearMemeCount) {
+			switch (nearMemeCount) {
 			case 0:
 				SpriteCodex::DrawTile0(screenPos, gfx);
 				break;
@@ -171,4 +181,14 @@ void MemeField::Tile::ToggleFlag()
 	else if (state == State::Flagged){
 		state = State::Hidden;
 	}
+}
+
+bool MemeField::Tile::IsEmpty()
+{
+	return nearMemeCount == 0 && !hasMeme;
+}
+
+bool MemeField::Tile::IsHidden()
+{
+	return state == State::Hidden;
 }
