@@ -9,6 +9,8 @@ MemeField::MemeField(int nMemes):
 	pos(100,100)
 {
 	assert(nMemes > 0 && nMemes < width * height);
+	this->nMemes = nMemes;
+
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, width-1);
@@ -56,7 +58,8 @@ void MemeField::Reveal(const Vei2 gridPos)
 {
 	Tile& tile = field[gridPos.y * width + gridPos.x];
 	tile.Reveal();
-	if (tile.HasMeme()) {
+	revealCount++;
+	if (tile.HasMeme()||revealCount == width * height - nMemes) {
 		isGameOver = true;
 	}
 	if (tile.IsEmpty()) {
@@ -70,14 +73,21 @@ void MemeField::Reveal(const Vei2 gridPos)
 	}
 }
 
-void MemeField::OnFlagClick(const Vei2 screenPos)
+bool MemeField::OnFlagClick(const Vei2 screenPos)
 {
 	ToggleFlag(ScreenToGrid(screenPos-pos));
+	if (isGameOver) {
+		return true;
+	}
+	return false;
 }
 
 void MemeField::ToggleFlag(const Vei2 gridPos)
 {
-	field[gridPos.y * width + gridPos.x].ToggleFlag();
+	field[gridPos.y * width + gridPos.x].ToggleFlag(correctFlagged);
+	if (correctFlagged == nMemes) {
+		isGameOver = true;
+	}
 }
 
 Vei2 & MemeField::ScreenToGrid(Vei2 screenPos)
@@ -111,17 +121,49 @@ void MemeField::Tile::Draw(const Vei2 & screenPos, bool& isGameOver, Graphics & 
 		if (isGameOver && hasMeme) {
 			SpriteCodex::DrawTileBomb(screenPos, gfx);
 		}
+		else if (isGameOver) {
+			switch (nearMemeCount) {
+			case 0:
+				SpriteCodex::DrawTile0(screenPos, gfx);
+				break;
+			case 1:
+				SpriteCodex::DrawTile1(screenPos, gfx);
+				break;
+			case 2:
+				SpriteCodex::DrawTile2(screenPos, gfx);
+				break;
+			case 3:
+				SpriteCodex::DrawTile3(screenPos, gfx);
+				break;
+			case 4:
+				SpriteCodex::DrawTile4(screenPos, gfx);
+				break;
+			case 5:
+				SpriteCodex::DrawTile5(screenPos, gfx);
+				break;
+			case 6:
+				SpriteCodex::DrawTile6(screenPos, gfx);
+				break;
+			case 7:
+				SpriteCodex::DrawTile7(screenPos, gfx);
+				break;
+			case 8:
+				SpriteCodex::DrawTile8(screenPos, gfx);
+				break;
+			}
+		}
 		else {
 			SpriteCodex::DrawTileButton(screenPos, gfx);
 		}
 		break;
 	case Flagged:
-		if (isGameOver && hasMeme) {
-			SpriteCodex::DrawTileBombRed(screenPos, gfx);
-		}
-		else if (isGameOver) {
+		if (isGameOver && !hasMeme) {
 			SpriteCodex::DrawTileFlag(screenPos, gfx);
 			SpriteCodex::DrawTileCross(screenPos, gfx);
+		}
+		else if (isGameOver) {
+			SpriteCodex::DrawTileBomb(screenPos, gfx);
+			SpriteCodex::DrawTileFlag(screenPos, gfx);
 		}
 		else {
 			SpriteCodex::DrawTileButton(screenPos, gfx);
@@ -130,7 +172,12 @@ void MemeField::Tile::Draw(const Vei2 & screenPos, bool& isGameOver, Graphics & 
 		break;
 	case Revealed:
 		if (hasMeme) {
-			SpriteCodex::DrawTileBomb(screenPos, gfx);
+			if (isGameOver && hasMeme) {
+				SpriteCodex::DrawTileBombRed(screenPos, gfx);
+			}
+			else {
+				SpriteCodex::DrawTileBomb(screenPos, gfx);
+			}
 		}
 		else {
 			switch (nearMemeCount) {
@@ -177,13 +224,19 @@ void MemeField::Tile::Reveal()
 	}
 }
 
-void MemeField::Tile::ToggleFlag()
+void MemeField::Tile::ToggleFlag(int& correctFlagged)
 {
 	if (state == State::Hidden) {
 		state = State::Flagged;
+		if (hasMeme) {
+			correctFlagged++;
+		}
 	}
 	else if (state == State::Flagged){
 		state = State::Hidden;
+		if (hasMeme) {
+			correctFlagged--;
+		}
 	}
 }
 

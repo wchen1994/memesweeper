@@ -17,7 +17,7 @@ private:
 		bool HasMeme() const;
 		void Draw(const Vei2& screenPos, bool& isGameOver, Graphics& gfx) const;
 		void Reveal();
-		void ToggleFlag();
+		void ToggleFlag(int &correctFlagged);
 		bool IsEmpty();
 		bool IsHidden();
 	public:
@@ -31,7 +31,7 @@ public:
 	void Draw(Graphics& gfx);
 	bool OnRevealedClick(const Vei2 screenPos);
 	void Reveal(const Vei2 gridPos);
-	void OnFlagClick(const Vei2 screenPos);
+	bool OnFlagClick(const Vei2 screenPos);
 	void ToggleFlag(const Vei2 gridPos);
 	Vei2& ScreenToGrid(const Vei2 screenPos);
 	RectI GetRect() const;
@@ -42,4 +42,7 @@ private:
 	Tile field[width * height];
 	bool isGameOver = false;
 	class Game *game;
+	int correctFlagged = 0;
+	int nMemes;
+	int revealCount = 0;
 };

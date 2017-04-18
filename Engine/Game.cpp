@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(20)
+	field(10)
 {
 }
 
@@ -53,7 +53,7 @@ void Game::UpdateModel()
 
 			if (event.GetType() == Mouse::Event::Type::RPress) {
 				if (field.GetRect().Contains(Vei2(mousePos.first, mousePos.second))) {
-					field.OnFlagClick(Vei2(mousePos.first, mousePos.second));
+					isGameOver = field.OnFlagClick(Vei2(mousePos.first, mousePos.second));
 				}
 			}
 		}
