@@ -11,17 +11,21 @@ MemeField::MemeField(int nMemes):
 	assert(nMemes > 0 && nMemes < width * height);
 	std::random_device rd;
 	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(0, width);
-	std::uniform_int_distribution<int> yDist(0, height);
+	std::uniform_int_distribution<int> xDist(0, width-1);
+	std::uniform_int_distribution<int> yDist(0, height-1);
 	
 	for (int i = 0; i < nMemes; i++) {
 		const Vei2 gridPos = { xDist(rng), yDist(rng) };
 		if (!field[gridPos.y * width + gridPos.x].HasMeme()) {
 			field[gridPos.y * width + gridPos.x].SpawnMeme();
+			field[gridPos.y * width + gridPos.x].nearMemeCount = 0;
 			//increment the memeCount on tile around
 			for (int y = std::max(0, gridPos.y - 1); y <= std::min(height - 1, gridPos.y + 1); y++) {
 				for (int x = std::max(0, gridPos.x - 1); x <= std::min(width - 1, gridPos.x + 1); x++) {
-					field[y*width+x].nearMemeCount++;
+					Tile& tile = field[y*width + x];
+					if (!tile.HasMeme()) {
+						tile.nearMemeCount++;
+					}
 				}
 			}
 		}
@@ -56,8 +60,8 @@ void MemeField::Reveal(const Vei2 gridPos)
 		isGameOver = true;
 	}
 	if (tile.IsEmpty()) {
-		for (int y = std::max(0, gridPos.y - 1); y <= std::min(height, gridPos.y + 1); y++) {
-			for (int x = std::max(0, gridPos.x - 1); x <= std::min(width, gridPos.x + 1); x++) {
+		for (int y = std::max(0, gridPos.y - 1); y <= std::min(height-1, gridPos.y + 1); y++) {
+			for (int x = std::max(0, gridPos.x - 1); x <= std::min(width-1, gridPos.x + 1); x++) {
 				if (field[y*width + x].IsHidden()) {
 					Reveal(Vei2(x, y));
 				}
